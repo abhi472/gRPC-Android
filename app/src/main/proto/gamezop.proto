@@ -1,0 +1,29 @@
+// Copyright 2018, Gamezop.
+// All rights reserved.
+
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "co.gamezop.interview";
+option java_outer_classname = "Core";
+
+package gamezop;
+
+service InfoService {
+   // method to get game data
+   rpc getGames (GamesRequest) returns (GamesResponse) {}
+}
+
+message Game {
+  string id = 1;
+  string name = 2;
+  string cover = 3;
+  string directUrl = 4;
+  string zipUrl = 5;
+}
+
+message GamesRequest {}
+
+message GamesResponse {
+  repeated Game games = 1;
+}
