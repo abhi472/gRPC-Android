@@ -29,7 +29,7 @@ protobuf {
             artifact = "com.google.protobuf:protoc-gen-javalite:3.0.0"
         }
         grpc {
-            artifact = 'io.grpc:protoc-gen-grpc-java:1.11.0' // CURRENT_GRPC_VERSION
+            artifact = 'io.grpc:protoc-gen-grpc-java:1.0.1' // CURRENT_GRPC_VERSION
         }
     }
     generateProtoTasks {
@@ -49,11 +49,14 @@ protobuf {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.android.support:appcompat-v7:26.1.0'
+    implementation 'com.android.support:recyclerview-v7:26.1.0'
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
-    implementation 'io.grpc:grpc-okhttp:1.11.0'
-    implementation 'io.grpc:grpc-protobuf-lite:1.11.0'
-    implementation 'io.grpc:grpc-stub:1.11.0'
+    implementation 'io.grpc:grpc-okhttp:1.0.1'
+    implementation 'io.grpc:grpc-protobuf-lite:1.0.1'
+    implementation 'io.grpc:grpc-stub:1.0.1'
     implementation 'javax.annotation:javax.annotation-api:1.2'
+    implementation "com.jakewharton:butterknife:$rootProject.butterKnifeVersion"
+    annotationProcessor "com.jakewharton:butterknife-compiler:$rootProject.butterKnifeVersion"
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
