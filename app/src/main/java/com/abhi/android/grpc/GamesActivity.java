@@ -1,10 +1,13 @@
 package com.abhi.android.grpc;
 
-import android.support.v7.app.AppCompatActivity;
+import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-
-import com.google.common.io.PatternFilenameFilter;
+import android.webkit.WebChromeClient;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -13,18 +16,15 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.concurrent.Callable;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import io.reactivex.Observable;
-import io.reactivex.ObservableSource;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
-import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
-import okhttp3.OkHttpClient;
 import okhttp3.ResponseBody;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
@@ -34,6 +34,8 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
 public class GamesActivity extends AppCompatActivity {
     Bundle bundle;
     Disposable disposable;
+    @BindView(R.id.web)
+    WebView mWebView;
     private String name;
     private String zipUrl;
     private String id;
@@ -42,13 +44,29 @@ public class GamesActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_games);
+        ButterKnife.bind(this);
         bundle = new Bundle();
         bundle = getIntent().getExtras();
         name = bundle.getString("gameName");
         zipUrl = bundle.getString("url");
         id = bundle.getString("id");
+        ProgressDialog dialog = new ProgressDialog(this);
+        mWebView.getSettings().setJavaScriptEnabled(true);
 
-        if(!isFileExisting()) {
+
+        mWebView.setWebChromeClient(new WebChromeClient() {
+            public void onProgressChanged(WebView view, int progress) {
+                // Activities and WebViews measure progress with different scales.
+                // The progress meter will automatically disappear when we reach 100%
+            }
+        });
+
+        mWebView.setWebViewClient(new MyOwnWebViewClient());
+
+
+        if (!isFileExisting()) {
+            dialog.setMessage("downloading required files");
+            dialog.show();
             providesNetworkService()
                     .zipDownload(zipUrl)
                     .subscribeOn(Schedulers.io())
@@ -56,16 +74,28 @@ public class GamesActivity extends AppCompatActivity {
                     .flatMap(this::downloadString)
                     .flatMap(this::zipfile)
                     .subscribe(
-                            s -> Log.d("check", "accept: "+s),
-                            throwable -> Log.d("check", "accept: "+throwable.getMessage()))
+                            s -> {
+                                dialog.cancel();
+                                File file = new File(getExternalFilesDir(null),
+                                        id + "/index.html");
+                                mWebView.loadUrl("file:///" + file);
+                                mWebView.setWebViewClient(new MyOwnWebViewClient());
+                            },
+                            throwable -> {
+                                dialog.cancel();
+                            })
 
             ;
         } else {
 
+            File file = new File(getExternalFilesDir(null), id + "/index.html");
+            mWebView.loadUrl("file:///" + file);
+            mWebView.setWebViewClient(new MyOwnWebViewClient());
         }
 
 
     }
+
 
     private boolean isFileExisting() {
         File zipFile = new File(getExternalFilesDir(null), id + ".zip");
@@ -77,12 +107,10 @@ public class GamesActivity extends AppCompatActivity {
     }
 
 
-    private String unpackZip(String path)
-    {
+    private String unpackZip(String path) {
         InputStream is;
         ZipInputStream zis;
-        try
-        {
+        try {
             String filename = "";
             is = new FileInputStream(path);
             zis = new ZipInputStream(new BufferedInputStream(is));
@@ -90,26 +118,24 @@ public class GamesActivity extends AppCompatActivity {
             byte[] buffer = new byte[1024];
             int count;
             String filePath = path.
-                    substring(0,path.lastIndexOf(File.separator));
+                    substring(0, path.lastIndexOf(File.separator));
 
-            while ((ze = zis.getNextEntry()) != null)
-            {
+            while ((ze = zis.getNextEntry()) != null) {
                 // zapis do souboru
                 filename = ze.getName();
 
                 // Need to create directories if not exists, or
                 // it will generate an Exception...
                 if (ze.isDirectory()) {
-                    File fmd = new File(filePath + filename);
+                    File fmd = new File(filePath + "/" + filename);
                     fmd.mkdirs();
                     continue;
                 }
 
-                FileOutputStream fout = new FileOutputStream(filePath + filename);
+                FileOutputStream fout = new FileOutputStream(filePath + "/" + filename);
 
                 // cteni zipu a zapis
-                while ((count = zis.read(buffer)) != -1)
-                {
+                while ((count = zis.read(buffer)) != -1) {
                     fout.write(buffer, 0, count);
                 }
 
@@ -118,10 +144,8 @@ public class GamesActivity extends AppCompatActivity {
             }
 
             zis.close();
-            return filePath + filename;
-        }
-        catch(IOException e)
-        {
+            return filePath + "/" + filename + "/index.html";
+        } catch (IOException e) {
             e.printStackTrace();
             return "";
         }
