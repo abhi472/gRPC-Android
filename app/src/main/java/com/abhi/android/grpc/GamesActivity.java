@@ -52,6 +52,7 @@ public class GamesActivity extends AppCompatActivity {
         id = bundle.getString("id");
         ProgressDialog dialog = new ProgressDialog(this);
         mWebView.getSettings().setJavaScriptEnabled(true);
+        setTitle(name);
 
 
         mWebView.setWebChromeClient(new WebChromeClient() {
