@@ -1,6 +1,8 @@
 package com.abhi.android.grpc;
 
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -44,6 +46,19 @@ public class GamesAdapter extends RecyclerView.Adapter<GamesAdapter.ViewHolder> 
 Game game = games.get(position);
 holder.setup(game);
 
+        holder.card.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Game game1 = games.get(holder.getAdapterPosition());
+                Intent intent = new Intent(context, GamesActivity.class);
+                intent.putExtra("gameName", game1.getName());
+                intent.putExtra("url", game1.getZipUrl());
+                intent.putExtra("id", game1.getId());
+                context.startActivity(intent);
+
+            }
+        });
+
     }
 
     @Override
@@ -72,6 +87,8 @@ holder.setup(game);
                     .fit()
                     .into(img);
             name.setText(game.getName());
+
+
         }
     }
 }
