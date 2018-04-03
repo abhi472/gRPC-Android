@@ -9,6 +9,8 @@ buildscript {
     dependencies {
         classpath 'com.android.tools.build:gradle:3.0.1'
         classpath "com.google.protobuf:protobuf-gradle-plugin:0.8.3"
+        classpath 'me.tatarka:gradle-retrolambda:3.6.1'
+
 
 
         // NOTE: Do not place your application dependencies here; they belong
@@ -29,4 +31,14 @@ task clean(type: Delete) {
 
 ext {
     butterKnifeVersion = '8.8.1'
+    rxjava2Version = '2.0.6'
+    rxandroidVersion = '2.0.1'
+    gsonVersion = '2.8.0'
+    okHttpVersion = '3.9.1'
+    retrofitVersion = '2.3.0'
+    retrofitScalarConverterVersion = '2.0.1'
+    retrofitGsonConverterVersion = '2.1.0'
+    rxjava2AdapterVersion = '2.3.0'
+
+
 }
