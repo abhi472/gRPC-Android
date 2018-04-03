@@ -36,8 +36,6 @@ public class GamesActivity extends AppCompatActivity {
     Disposable disposable;
     @BindView(R.id.web)
     WebView mWebView;
-    private String name;
-    private String zipUrl;
     private String id;
 
     @Override
@@ -47,20 +45,16 @@ public class GamesActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         bundle = new Bundle();
         bundle = getIntent().getExtras();
-        name = bundle.getString("gameName");
-        zipUrl = bundle.getString("url");
+        String name = bundle.getString("gameName");
+        String zipUrl = bundle.getString("url");
         id = bundle.getString("id");
         ProgressDialog dialog = new ProgressDialog(this);
         mWebView.getSettings().setJavaScriptEnabled(true);
         setTitle(name);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 
-        mWebView.setWebChromeClient(new WebChromeClient() {
-            public void onProgressChanged(WebView view, int progress) {
-                // Activities and WebViews measure progress with different scales.
-                // The progress meter will automatically disappear when we reach 100%
-            }
-        });
+        mWebView.setWebChromeClient(new WebChromeClient());
 
         mWebView.setWebViewClient(new MyOwnWebViewClient());
 
@@ -68,7 +62,7 @@ public class GamesActivity extends AppCompatActivity {
         if (!isFileExisting()) {
             dialog.setMessage("downloading required files");
             dialog.show();
-            providesNetworkService()
+            disposable = providesNetworkService()
                     .zipDownload(zipUrl)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -221,5 +215,13 @@ public class GamesActivity extends AppCompatActivity {
 
     RetrofitApiNodes providesNetworkService() {
         return provideCall().create(RetrofitApiNodes.class);
+    }
+
+    @Override
+    protected void onDestroy() {
+
+        if(disposable != null)
+            disposable.dispose();
+        super.onDestroy();
     }
 }
