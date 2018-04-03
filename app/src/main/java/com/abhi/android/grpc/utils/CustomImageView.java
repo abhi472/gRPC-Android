@@ -1,4 +1,4 @@
-package com.abhi.android.grpc;
+package com.abhi.android.grpc.utils;
 
 import android.content.Context;
 import android.support.v7.widget.CardView;

@@ -1,8 +1,7 @@
-package com.abhi.android.grpc;
+package com.abhi.android.grpc.adapters;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -10,8 +9,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.abhi.android.grpc.R;
+import com.abhi.android.grpc.activities.GamesActivity;
+import com.abhi.android.grpc.utils.CustomImageView;
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.PicassoProvider;
 
 import java.util.List;
 

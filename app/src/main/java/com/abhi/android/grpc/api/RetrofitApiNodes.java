@@ -1,4 +1,4 @@
-package com.abhi.android.grpc;
+package com.abhi.android.grpc.api;
 
 import io.reactivex.Observable;
 import okhttp3.ResponseBody;

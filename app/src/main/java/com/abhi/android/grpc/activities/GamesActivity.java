@@ -1,13 +1,14 @@
-package com.abhi.android.grpc;
+package com.abhi.android.grpc.activities;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
+
+import com.abhi.android.grpc.utils.MyOwnWebViewClient;
+import com.abhi.android.grpc.R;
+import com.abhi.android.grpc.api.RetrofitApiNodes;
 
 import java.io.BufferedInputStream;
 import java.io.File;
